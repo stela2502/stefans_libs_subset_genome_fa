@@ -100,9 +100,10 @@ close ( LOG );
 
 my ($genomeDB, $bed, @tmp, $acc, $start, $end, $name );
 
+print ("Loading Fasta DB\n");
 $genomeDB = stefans_libs::fastaDB->new( $fa );
+print ( "Fasta DB loaded\n");
 
-## so now iónle get the info from the DB - fingers crossed!
 if ( $bed_file =~ m/\.gz$/ ) {
 	open( IN, "zcat $bed_file |" )
 	  or die "I could not gunzip the zipped file on the fly\n";
@@ -112,7 +113,7 @@ else {
 	  or die "I could not open file '$bed_file'\n$!\n";
 }
 
-my $fastaDB = stefans_libs::fastaDB->new( $fa );
+my $fastaDB = stefans_libs::fastaDB->new( );
 foreach (<IN>) {
 	chomp($_);
 	if ( substr( $_, 0, 1 ) eq "#" ) {
@@ -124,7 +125,7 @@ foreach (<IN>) {
 	if ( ! defined $seq ){
 		print ( "$acc $start $end $name -> no sequnce!" );
 	}else {
-		$fastaDB.addEntry( $name, $seq );
+		$fastaDB->addEntry( $name, $seq );
 	}
 }
 

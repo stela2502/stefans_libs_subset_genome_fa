@@ -103,7 +103,7 @@ sub AddFile {
 	}else {
 		open( IN, "<$filename" ) or die "Konnte $filename nicht öffnen!\n";
 	}
-    $seq="";
+        $seq="";
 	while (<IN>) {
 		
 		next unless ( $_ =~ m/\w/);
@@ -111,7 +111,7 @@ sub AddFile {
 			if ( defined $tag ) {
 				#print "we add the seq $tag, $seq\n";
 				$self->addEntry( $tag, $seq );
-				$seq = undef;
+				$seq = "";
 				$self->{entries}++;
 				
 			}
@@ -208,7 +208,7 @@ sub Get_SubSeq {
 		elsif ( defined $end && !defined $start ) {
 			return
 			  substr( $self->_seq($acc), $start,
-				length( $self->Seq ) - $start );
+				length( $self->_seq($acc) ) - $start );
 		}
 		else {
 			return $self->_seq($acc);
