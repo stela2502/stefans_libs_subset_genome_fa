@@ -259,6 +259,80 @@ sub get_hashEntries_as_string {
 	return $string;
 }
 
+sub printEntry {
+	my ( $key, $value, $i, $maxDepth ) = @_;
+
+	my $max    = 10;
+	my $string = '';
+	my ( $printableString, $maxStrLength );
+	$maxStrLength = 50;
+
+	if ( defined $value ) {
+		for ( $a = $i ; $a > 0 ; $a-- ) {
+			$string .= "\t";
+		}
+		$printableString = $value;
+		
+		if ( length($value) > $maxStrLength ) {
+			$printableString = substr( $value, 0, $maxStrLength );
+			$printableString = "$printableString ...";
+		}
+		$printableString =~ s/'/\\'/g;
+		$string .= "$key\t$printableString\n";
+	}
+	else {
+		for ( $a = $i ; $a > 0 ; $a-- ) {
+			$string .= "\t";
+		}
+		$printableString = $key;
+		if ( length($printableString) > $maxStrLength ) {
+			$printableString = substr( $key, 0, $maxStrLength );
+			$printableString = "$printableString ...";
+		}
+		$printableString =~ s/'/\\'/g;
+		$string .= "$printableString\n";
+	}
+	return $string if ( $maxDepth == $i );
+	if ( defined $value ) {
+		if ( ref($value) eq "ARRAY" ) {
+			$max = 20;
+			foreach my $value1 (@$value) {
+				$string .=
+				  printEntry( $value1, undef, $i + 1, $maxDepth, $string )."\n"
+				  if ( defined $value1 );
+				last if ( $max-- == 0 );
+			}
+		}
+		elsif (  $value =~ m/HASH/ ) {
+			$max = 20;
+			while ( my ( $key1, $value1 ) = each %$value ) {
+				$string .=
+				  printEntry( $key1, $value1, $i + 1, $maxDepth, $string );
+				last if ( $max-- == 0 );
+			}
+		}
+	}
+	if ( defined $key ) {
+		if ( ref($key) eq "ARRAY" ) {
+			$max = 20;
+			foreach my $value1 (@$key) {
+				$string .=
+				  printEntry( $value1, undef, $i + 1, $maxDepth, $string );
+				last if ( $max-- == 0 );
+			}
+		}
+		elsif ( ref($key) eq "HASH" ) {
+			$max = 20;
+			while ( my ( $key1, $value1 ) = each %$key ) {
+				$string .=
+				  printEntry( $key1, $value1, $i + 1, $maxDepth, $string );
+				last if ( $max-- == 0 );
+			}
+		}
+	}
+	return $string;
+}
+
 
 sub _addArray {
 	my ( $self, $array ) = @_;
