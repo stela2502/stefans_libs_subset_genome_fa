@@ -57,11 +57,6 @@ unless ( defined $fa) {
 	$error .= "the cmd line switch -fa is undefined!\n";
 }
 
-else {
-	my $filemap = root->filemap($outfile);
-	mkdir( $filemap->{'path'} ) unless ( -d $filemap->{'path'});
-}
-
 
 if ( $help ){
 	print helpString( ) ;
@@ -103,10 +98,9 @@ open ( LOG , ">$outfile.log") or die $!;
 print LOG $task_description."\n";
 close ( LOG );
 
-my ($genomeDB, $bed, @tmp, $acc, $start, $end );
+my ($genomeDB, $bed, @tmp, $acc, $start, $end, $name );
 
 $genomeDB = stefans_libs::fastaDB->new( $fa );
-$bed -> read_file ( $bed_file );
 
 ## so now iónle get the info from the DB - fingers crossed!
 if ( $bed_file =~ m/\.gz$/ ) {
@@ -125,7 +119,13 @@ foreach (<IN>) {
 		next;
 	}
 	($acc, $start, $end, $name) = split ("\t", $_);
-	$fastaDB.addEntry( $name, $genomeDB -> Get_SubSeq ( $acc, $start, $end ) );
+	print( "$acc $start $end $name\n") if $debug;
+	my $seq =  $genomeDB -> Get_SubSeq ( $acc, $start, $end );
+	if ( ! defined $seq ){
+		print ( "$acc $start $end $name -> no sequnce!" );
+	}else {
+		$fastaDB.addEntry( $name, $seq );
+	}
 }
 
 $fastaDB->WriteAsFastaDB($outfile);
