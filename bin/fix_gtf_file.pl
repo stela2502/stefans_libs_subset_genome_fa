@@ -36,11 +36,10 @@ my $VERSION = 'v1.0';
 
 my $includes = "-I " . join( " -I ", @INC );
 
-my ( $help, $debug, $database, $bed_file, $bp_in_center, $masked, $fa, $version, $outfile, $no_N_regions );
+my ( $help, $debug, $file, $outfile );
 
 Getopt::Long::GetOptions(
-	 "-bed_file=s"    => \$bed_file,
-	 "-fa=s"    => \$fa,
+	 "-file=s"    => \$file,
 	 "-outfile=s"    => \$outfile,
 
 	 "-help"             => \$help,
@@ -50,11 +49,11 @@ Getopt::Long::GetOptions(
 my $warn = '';
 my $error = '';
 
-unless ( defined $bed_file) {
-	$error .= "the cmd line switch -bed_file is undefined!\n";
+unless ( defined $file) {
+	$error .= "the cmd line switch -file is undefined!\n";
 }
-unless ( defined $fa) {
-	$error .= "the cmd line switch -fa is undefined!\n";
+unless ( defined $outfile) {
+	$error .= "the cmd line switch -outfile is undefined!\n";
 }
 
 
@@ -90,8 +89,7 @@ sub helpString {
 my ( $task_description);
 
 $task_description .= 'perl '.$includes.' '.$plugin_path .'/get_sequences_4_bed_file.pl';
-$task_description .= " -bed_file $bed_file" if (defined $bed_file);
-$task_description .= " -fa $fa" if (defined $fa);
+$task_description .= " -file $bed_file" if (defined $bed_file);
 $task_description .= " -outfile $outfile" if (defined $outfile);
 
 open ( LOG , ">$outfile.log") or die $!;
@@ -99,10 +97,6 @@ print LOG $task_description."\n";
 close ( LOG );
 
 my ($genomeDB, $bed, @tmp, $acc, $start, $end, $name );
-
-print ("Loading Fasta DB\n");
-$genomeDB = stefans_libs::fastaDB->new( $fa );
-print ( "Fasta DB loaded\n");
 
 if ( $bed_file =~ m/\.gz$/ ) {
 	open( IN, "zcat $bed_file |" )
@@ -112,22 +106,30 @@ else {
 	open( IN, "<$bed_file" )
 	  or die "I could not open file '$bed_file'\n$!\n";
 }
+my ( $seqname, $source, $feature, $start, $end, $score,	$strand, $frame, $attribute);
 
-my $fastaDB = stefans_libs::fastaDB->new( );
+my $zero;
+
+open( OUT, ">$outfile" ) or die "I could not create the outfile '$outfile'\n$!\n";
+
 foreach (<IN>) {
 	chomp($_);
 	if ( substr( $_, 0, 1 ) eq "#" ) {
 		next;
 	}
-	($acc, $start, $end, $name) = split ("\t", $_);
-	print( "$acc $start $end $name\n") if $debug;
-	my $seq =  $genomeDB -> Get_SubSeq ( $acc, $start, $end );
-	if ( ! defined $seq ){
-		print ( "$acc $start $end $name -> no sequnce!" );
-	}else {
-		$fastaDB->addEntry( $name, $seq );
+	( $seqname, $source, $feature, $start, $end, $score,	$strand, $frame, $attribute) = split ("\t", $_);
+
+	if ($feature == "gene"){
+		$zero = $start -1;
 	}
+	if ( $attribute =~m/gene_name "([\w\d]*)";/ ){
+		$seqname = $1;
+	}
+	$start -= $zero;
+	$end -=  $zero;
+	print OUT join( "\t", $seqname, $source, $feature, $start, $end, $score,	$strand, $frame, $attribute)."\n";
+
 }
 
-$fastaDB->WriteAsFastaDB($outfile);
-
+close ( IN );
+close ( OUT );

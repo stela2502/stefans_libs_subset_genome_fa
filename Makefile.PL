@@ -22,7 +22,10 @@ my %WriteMakefileArgs = (
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'stefans_libs-fastaDB-*' },
-    EXE_FILES => [ 'bin/get_fa_sequences_4_bed_file.pl'],
+    EXE_FILES => [ 
+        'bin/get_fa_sequences_4_bed_file.pl',
+        "bin/fix_gtf_file.pl",
+    ],
 );
 
 # Compatibility with old versions of ExtUtils::MakeMaker
