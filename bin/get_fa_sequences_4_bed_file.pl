@@ -118,7 +118,7 @@ else {
 	  or die "I could not open file '$bed_file'\n$!\n";
 }
 
-$fastaDB = stefans_libs::fastaDB->new( $fa );
+my $fastaDB = stefans_libs::fastaDB->new( $fa );
 foreach (<IN>) {
 	chomp($_);
 	if ( substr( $_, 0, 1 ) eq "#" ) {
