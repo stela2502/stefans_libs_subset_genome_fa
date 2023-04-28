@@ -89,7 +89,7 @@ sub helpString {
 
 my ( $task_description);
 
-$task_description .= 'perl '.$includes.' '.$plugin_path .'/get_sequences_4_bed_file.pl';
+$task_description .= 'perl '.$includes.' '.$plugin_path .'/get_fa_sequences_4_bed_file.pl';
 $task_description .= " -bed_file $bed_file" if (defined $bed_file);
 $task_description .= " -fa $fa" if (defined $fa);
 $task_description .= " -outfile $outfile" if (defined $outfile);
