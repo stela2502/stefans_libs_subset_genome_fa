@@ -75,7 +75,6 @@ sub helpString {
  command line switches for get_fa_sequences_4_bed_file.pl
 
    -bed_file   :the bed file containing the positions for the fasta table
-   -fa         :the fasta genome database
    -outfile    :the fasta db file
       
    -help       :print this help
@@ -89,7 +88,7 @@ sub helpString {
 my ( $task_description);
 
 $task_description .= 'perl '.$includes.' '.$plugin_path .'/fix_get_file.pl';
-$task_description .= " -file $bed_file" if (defined $bed_file);
+$task_description .= " -bed_file $bed_file" if (defined $bed_file);
 $task_description .= " -outfile $outfile" if (defined $outfile);
 
 open ( LOG , ">$outfile.log") or die $!;
