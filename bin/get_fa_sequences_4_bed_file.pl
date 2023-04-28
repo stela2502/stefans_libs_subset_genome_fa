@@ -121,7 +121,7 @@ foreach (<IN>) {
 	}
 	($acc, $start, $end, $name) = split ("\t", $_);
 	print( "$acc $start $end $name\n") if $debug;
-	my $seq =  $genomeDB -> Get_SubSeq ( $acc, $start, $end );
+	my $seq =  $genomeDB -> Get_SubSeq ( $acc, $start, $end +1 );
 	if ( ! defined $seq ){
 		print ( "$acc $start $end $name -> no sequnce!" );
 	}else {
