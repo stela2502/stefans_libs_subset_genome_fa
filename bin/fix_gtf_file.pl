@@ -122,7 +122,7 @@ foreach (<IN>) {
 	if ($feature == "gene"){
 		$zero = $start -1;
 	}
-	if ( $attribute =~m/gene_name "([\w\d]*)";/ ){
+	if ( $attribute =~m/gene_name "([\w\d\-\._]*)";/ ){
 		$seqname = $1;
 	}
 	$start -= $zero;
