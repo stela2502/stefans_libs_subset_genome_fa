@@ -15,11 +15,11 @@
 #  You should have received a copy of the GNU General Public License 
 #  along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-=head1 get_sequences_4_bed_file.pl
+=head1 get_sequences_4_file.pl
 
 This script gets you all sequences for a given bed file. Make sure you use the right genome for that.
 
-To get further help use 'get_sequences_4_bed_file.pl -help' at the comman line.
+To get further help use 'get_sequences_4_file.pl -help' at the comman line.
 
 =cut
 
@@ -72,10 +72,10 @@ sub helpString {
 	$errorMessage = ' ' unless ( defined $errorMessage); 
  	return "
  $errorMessage
- command line switches for get_fa_sequences_4_bed_file.pl
+ command line switches for fix_get_file.pl
 
-   -bed_file   :the bed file containing the positions for the fasta table
-   -outfile    :the fasta db file
+   -file       :the gtf file that should be fixed
+   -outfile    :the outfile
       
    -help       :print this help
    -debug      :verbose output
@@ -88,7 +88,7 @@ sub helpString {
 my ( $task_description);
 
 $task_description .= 'perl '.$includes.' '.$plugin_path .'/fix_get_file.pl';
-$task_description .= " -bed_file $bed_file" if (defined $bed_file);
+$task_description .= " -file $file" if (defined $file);
 $task_description .= " -outfile $outfile" if (defined $outfile);
 
 open ( LOG , ">$outfile.log") or die $!;
@@ -97,13 +97,13 @@ close ( LOG );
 
 my ($genomeDB, $bed, @tmp, $acc, $start, $end, $name );
 
-if ( $bed_file =~ m/\.gz$/ ) {
-	open( IN, "zcat $bed_file |" )
+if ( $file =~ m/\.gz$/ ) {
+	open( IN, "zcat $file |" )
 	  or die "I could not gunzip the zipped file on the fly\n";
 }
 else {
-	open( IN, "<$bed_file" )
-	  or die "I could not open file '$bed_file'\n$!\n";
+	open( IN, "<$file" )
+	  or die "I could not open file '$file'\n$!\n";
 }
 my ( $seqname, $source, $feature, $start, $end, $score,	$strand, $frame, $attribute);
 
